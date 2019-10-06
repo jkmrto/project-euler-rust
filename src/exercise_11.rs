@@ -88,9 +88,9 @@ fn update_positions(positions: &mut [Position; 3], shift: &Position) {
     }
 }
 
-fn print_positions(positions: &[Position; 3]) {
-    println!("{}, {}, {}", positions[0], positions[1], positions[2])
-}
+// fn print_positions(positions: &[Position; 3]) {
+//     println!("{}, {}, {}", positions[0], positions[1], positions[2])
+// }
 
 fn calculate_product(matrix: &Vec<Vec<i32>>, positions: &[Position; 3]) -> i32{
     let mut acc = 1;
@@ -102,7 +102,7 @@ fn calculate_product(matrix: &Vec<Vec<i32>>, positions: &[Position; 3]) -> i32{
 
 fn matrix_printer(matrix: Vec<Vec<i32>>) {
     let mut max_product: i32 = 0;
-    let mut product = 0;
+    let mut product;
     let shift = Position { x: 1, y: 1 };
     let limit = Position { x: 20, y: 20 };
 
