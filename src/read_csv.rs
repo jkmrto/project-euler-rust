@@ -11,10 +11,15 @@ fn main() {
     let split = contents.split("\n");
     let temp_vec: Vec<&str> = split.collect();
 
-    let mut vec = Vec::new();
-
     println!("Printing:");
-    for element in &vec{
-        println!("{}", element);
+    for row in &temp_vec{
+        let split_row: Vec<u32>  = row // string
+            .split(" ") // Iter::vec<&str>
+            .map(|s| s.parse::<u32>().unwrap()) // Iter::vec<u32> 
+            .collect(); // vec <u32>
+            
+         for eo in &split_row{
+             println!("{}", eo);
+         }
     }
 }
