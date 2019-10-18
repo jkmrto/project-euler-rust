@@ -40,24 +40,19 @@ fn calculate_product(matrix: &Vec<Vec<u32>>, positions: &[Position; 3]) -> u32 {
     acc
 }
 
-// fn init_positions(shift: &Position) -> [Position; 3] {
-//     let origin = Position { x: 0, y: 0 };
-//     [
-//         origin,
-//         update_positions(&mut origin, shift),
-//         update_positions(&mut update_positions(&mut origin, shift), shift),
-//     ]
-// }
+fn init_positions(shift: &Position) -> [Position; 3] {
+    let mut origin = Position { x: 0, y: 0 };
+    let mut second = Position { x: 0, y: 0 };
+    let mut third = Position { x: 0, y: 0 };
+    second.shift(shift);
+    third.shift(shift);
+    third.shift(shift);
+    [origin, second, third]
+}
 
 fn find_max_product(matrix: &Vec<Vec<u32>>, shift: &Position) -> u32 {
     // build positions based on shift
-    let mut positions = [
-        Position { x: 0, y: 0 },
-        Position { x: 1, y: 0 },
-        Position { x: 2, y: 0 },
-    ];
-
-    // init_positions(shift);
+    let mut positions = init_positions(shift);
 
     let limit = Position {
         y: matrix.len(),
