@@ -14,3 +14,8 @@ rustc ./src/exercise_11.rs -o ./target/exercise_11
 ```rust
 ./target/exercise_11
 ```
+
+# Execute test with println logs
+```
+cargo test -- --nocapture
+``

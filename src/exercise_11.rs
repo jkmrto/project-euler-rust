@@ -1,6 +1,6 @@
 use std::fmt;
 
-struct Position {
+pub struct Position {
     x: usize,
     y: usize,
 }
@@ -29,42 +29,47 @@ fn update_positions(positions: &mut [Position; 3], shift: &Position) {
 fn calculate_product(matrix: &Vec<Vec<u32>>, positions: &[Position; 3]) -> u32 {
     let mut acc = 1;
     for position in positions {
-        acc *= matrix[position.x][position.y]
+        acc *= matrix[position.y][position.x]
     }
     acc
 }
 
-fn matrix_printer(matrix: &Vec<Vec<u32>>) {
-    let mut max_product: u32 = 0;
-    let mut product = 0;
-    let shift = Position { x: 1, y: 1 };
-    let limit = Position { x: 20, y: 20 };
-
+fn find_max_product(matrix: &Vec<Vec<u32>>, shift: &Position) -> u32 {
+    // build positions based on shift
     let mut positions = [
-        Position { x: 1, y: 1 },
-        Position { x: 1, y: 2 },
-        Position { x: 1, y: 3 },
+        Position { x: 0, y: 0 },
+        Position { x: 1, y: 0 },
+        Position { x: 2, y: 0 },
     ];
 
-    println!("Max product: {}", max_product)
+    let limit = Position {
+        y: matrix.len(),
+        x: matrix[0].len(),
+    };
+
+    let mut max_product = 0;
+    let mut product;
+
+    while are_valid_index(&positions, &limit) {
+        product = calculate_product(&matrix, &positions);
+        max_product = if max_product < product {
+            product
+        } else {
+            max_product
+        };
+        update_positions(&mut positions, &shift)
+    }
+    max_product
 }
 
 #[cfg(test)]
 mod tests {
+    use super::Position;
     #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
+    fn horizontal() {
+        let shift = Position { x: 1, y: 0 };
+        let matrix = vec![vec![1, 2, 3, 4, 5, 5, 5, 1, 1, 1]];
+        assert_eq!(super::find_max_product(&matrix, &shift), 125);
     }
-}
 
-// fn find_max_product(matrix: &Vec<Vec<u32>>, shift: &position) {
-//     while are_valid_index(&positions, &limit) {
-//         product = calculate_product(&matrix, &positions);
-//         max_product = if max_product < product {
-//             product
-//         } else {
-//             max_product
-//         };
-//         update_positions(&mut positions, &shift)
-//     }
-// }
+}
