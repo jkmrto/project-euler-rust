@@ -5,6 +5,13 @@ pub struct Position {
     y: usize,
 }
 
+impl Position {
+    fn shift(&mut self, shift: &Position) {
+        self.x += shift.x;
+        self.y += shift.y;
+    }
+}
+
 impl fmt::Display for Position {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "({}, {})", self.x, self.y)
@@ -17,8 +24,7 @@ fn are_valid_index(positions: &[Position; 3], limit: &Position) -> bool {
 
 fn update_positions(positions: &mut [Position; 3], shift: &Position) {
     for position in positions {
-        position.x += shift.x;
-        position.y += shift.y;
+        position.shift(shift)
     }
 }
 
@@ -34,6 +40,15 @@ fn calculate_product(matrix: &Vec<Vec<u32>>, positions: &[Position; 3]) -> u32 {
     acc
 }
 
+// fn init_positions(shift: &Position) -> [Position; 3] {
+//     let origin = Position { x: 0, y: 0 };
+//     [
+//         origin,
+//         update_positions(&mut origin, shift),
+//         update_positions(&mut update_positions(&mut origin, shift), shift),
+//     ]
+// }
+
 fn find_max_product(matrix: &Vec<Vec<u32>>, shift: &Position) -> u32 {
     // build positions based on shift
     let mut positions = [
@@ -41,6 +56,8 @@ fn find_max_product(matrix: &Vec<Vec<u32>>, shift: &Position) -> u32 {
         Position { x: 1, y: 0 },
         Position { x: 2, y: 0 },
     ];
+
+    // init_positions(shift);
 
     let limit = Position {
         y: matrix.len(),
@@ -71,5 +88,13 @@ mod tests {
         let matrix = vec![vec![1, 2, 3, 4, 5, 5, 5, 1, 1, 1]];
         assert_eq!(super::find_max_product(&matrix, &shift), 125);
     }
+
+    // #[test]
+    // fn init_positions() {
+    //     let shift = Position { x: 1, y: 0 };
+    //     println!("Testing init positions");
+    //     super::init_positions(&shift);
+    //     assert_eq!(56, 67);
+    // }
 
 }
