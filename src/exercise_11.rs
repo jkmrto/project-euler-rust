@@ -1,5 +1,4 @@
 use std::fmt;
-mod read_csv;
 
 struct Position {
     x: usize,
@@ -10,12 +9,6 @@ impl fmt::Display for Position {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "({}, {})", self.x, self.y)
     }
-}
-
-fn main() {
-    let filename = "./matrix.csv";
-    let matrix = read_csv::read_matrix_from_file(&filename);
-    matrix_printer(&matrix)
 }
 
 fn are_valid_index(positions: &[Position; 3], limit: &Position) -> bool {
@@ -43,7 +36,7 @@ fn calculate_product(matrix: &Vec<Vec<u32>>, positions: &[Position; 3]) -> u32 {
 
 fn matrix_printer(matrix: &Vec<Vec<u32>>) {
     let mut max_product: u32 = 0;
-    let mut product;
+    let mut product = 0;
     let shift = Position { x: 1, y: 1 };
     let limit = Position { x: 20, y: 20 };
 
@@ -53,16 +46,25 @@ fn matrix_printer(matrix: &Vec<Vec<u32>>) {
         Position { x: 1, y: 3 },
     ];
 
-    while are_valid_index(&positions, &limit) {
-        product = calculate_product(&matrix, &positions);
-        max_product = if max_product < product {
-            product
-        } else {
-            max_product
-        };
-
-        update_positions(&mut positions, &shift)
-    }
-
     println!("Max product: {}", max_product)
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_works() {
+        assert_eq!(2 + 2, 4);
+    }
+}
+
+// fn find_max_product(matrix: &Vec<Vec<u32>>, shift: &position) {
+//     while are_valid_index(&positions, &limit) {
+//         product = calculate_product(&matrix, &positions);
+//         max_product = if max_product < product {
+//             product
+//         } else {
+//             max_product
+//         };
+//         update_positions(&mut positions, &shift)
+//     }
+// }
