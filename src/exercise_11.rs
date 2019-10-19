@@ -97,12 +97,6 @@ fn find_max_product(matrix: &Vec<Vec<u32>>, shift: &Position) -> u32 {
 #[cfg(test)]
 mod tests {
     use super::Position;
-    #[test]
-    fn horizontal() {
-        let shift = Position { x: 1, y: 0 };
-        let matrix = vec![vec![1, 2, 3, 4, 5, 5, 5, 1, 1, 1]];
-        assert_eq!(super::find_max_product(&matrix, &shift), 125);
-    }
 
     #[test]
     fn init_positions() {
@@ -112,11 +106,25 @@ mod tests {
         assert_eq!(positions[1], Position { x: 1, y: 1 });
         assert_eq!(positions[2], Position { x: 2, y: 2 });
     }
-    // let matrix = vec![
-    //     vec![3, 2, 3, 1, 1],
-    //     vec![1, 2, 3, 1, 1],
-    //     vec![1, 2, 3, 1, 1],
-    //     vec![1, 2, 3, 3, 1],
-    //     vec![1, 2, 3, 1, 1],
-    // ];
+
+    #[test]
+    fn horizontal() {
+        let shift = Position { x: 1, y: 0 };
+        let matrix = vec![vec![1, 2, 3, 4, 5, 5, 5, 1, 1, 1]];
+        assert_eq!(super::find_max_product(&matrix, &shift), 125);
+    }
+
+    #[test]
+    fn main_diagonal() {
+        let matrix = vec![
+            vec![5, 2, 3, 1, 1],
+            vec![1, 2, 3, 1, 1],
+            vec![1, 2, 3, 1, 1],
+            vec![1, 2, 3, 3, 1],
+            vec![1, 2, 3, 1, 1],
+        ];
+        let shift = Position { x: 1, y: 1 };
+        assert_eq!(super::find_max_product(&matrix, &shift), 30);
+    }
+
 }
