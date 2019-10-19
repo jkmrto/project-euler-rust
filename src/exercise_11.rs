@@ -6,15 +6,37 @@ pub struct Position {
 }
 
 impl Position {
+    fn new_with_shift(shift: &Position, moves: usize) -> Position {
+        let mut position = Position { x: 0, y: 0 };
+        position.several_shift(shift, moves);
+        position
+    }
+
     fn shift(&mut self, shift: &Position) {
         self.x += shift.x;
         self.y += shift.y;
+    }
+    fn several_shift(&mut self, shift: &Position, n_moves: usize) {
+        self.x += shift.x * n_moves;
+        self.y += shift.y * n_moves;
     }
 }
 
 impl fmt::Display for Position {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "({}, {})", self.x, self.y)
+    }
+}
+
+impl fmt::Debug for Position {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "({}, {})", self.x, self.y)
+    }
+}
+
+impl PartialEq for Position {
+    fn eq(&self, other: &Self) -> bool {
+        self.x == other.x && self.y == other.y
     }
 }
 
@@ -28,9 +50,9 @@ fn update_positions(positions: &mut [Position; 3], shift: &Position) {
     }
 }
 
-// fn print_positions(positions: &[Position; 3]) {
-//     println!("{}, {}, {}", positions[0], positions[1], positions[2])
-// }
+fn print_positions(positions: &[Position; 3]) {
+    println!("{}, {}, {}", positions[0], positions[1], positions[2])
+}
 
 fn calculate_product(matrix: &Vec<Vec<u32>>, positions: &[Position; 3]) -> u32 {
     let mut acc = 1;
@@ -41,13 +63,11 @@ fn calculate_product(matrix: &Vec<Vec<u32>>, positions: &[Position; 3]) -> u32 {
 }
 
 fn init_positions(shift: &Position) -> [Position; 3] {
-    let mut origin = Position { x: 0, y: 0 };
-    let mut second = Position { x: 0, y: 0 };
-    let mut third = Position { x: 0, y: 0 };
-    second.shift(shift);
-    third.shift(shift);
-    third.shift(shift);
-    [origin, second, third]
+    [
+        Position::new_with_shift(shift, 0),
+        Position::new_with_shift(shift, 1),
+        Position::new_with_shift(shift, 2),
+    ]
 }
 
 fn find_max_product(matrix: &Vec<Vec<u32>>, shift: &Position) -> u32 {
@@ -84,12 +104,19 @@ mod tests {
         assert_eq!(super::find_max_product(&matrix, &shift), 125);
     }
 
-    // #[test]
-    // fn init_positions() {
-    //     let shift = Position { x: 1, y: 0 };
-    //     println!("Testing init positions");
-    //     super::init_positions(&shift);
-    //     assert_eq!(56, 67);
-    // }
-
+    #[test]
+    fn init_positions() {
+        let shift = Position { x: 1, y: 1 };
+        let positions = super::init_positions(&shift);
+        assert_eq!(positions[0], Position { x: 0, y: 0 });
+        assert_eq!(positions[1], Position { x: 1, y: 1 });
+        assert_eq!(positions[2], Position { x: 2, y: 2 });
+    }
+    // let matrix = vec![
+    //     vec![3, 2, 3, 1, 1],
+    //     vec![1, 2, 3, 1, 1],
+    //     vec![1, 2, 3, 1, 1],
+    //     vec![1, 2, 3, 3, 1],
+    //     vec![1, 2, 3, 1, 1],
+    // ];
 }
