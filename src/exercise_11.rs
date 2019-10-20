@@ -1,46 +1,6 @@
-use std::fmt;
+use super::position::Position;
 
-pub struct Position {
-    x: usize,
-    y: usize,
-}
-
-impl Position {
-    fn new(origin: &Position, shift: &Position, moves: usize) -> Position {
-        let mut position = Position { x: 0, y: 0 };
-        position.several_shift(shift, moves);
-        position.shift(origin);
-        position
-    }
-
-    fn shift(&mut self, shift: &Position) {
-        self.x += shift.x;
-        self.y += shift.y;
-    }
-    fn several_shift(&mut self, shift: &Position, n_moves: usize) {
-        self.x += shift.x * n_moves;
-        self.y += shift.y * n_moves;
-    }
-}
-
-impl fmt::Display for Position {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "({}, {})", self.x, self.y)
-    }
-}
-
-impl fmt::Debug for Position {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "({}, {})", self.x, self.y)
-    }
-}
-
-impl PartialEq for Position {
-    fn eq(&self, other: &Self) -> bool {
-        self.x == other.x && self.y == other.y
-    }
-}
-
+// Should be moved to position lib?
 fn is_valid_index(position: &Position, matrix: &Vec<Vec<u32>>) -> bool {
     (matrix[0].len() > position.x) && (matrix.len() > position.y)
 }
@@ -71,6 +31,11 @@ fn init_positions(origin: &Position, shift: &Position) -> [Position; 3] {
     ]
 }
 
+fn choose_bigger(v1: u32, v2: u32) -> u32 {
+    let result = if v1 < v2 { v2 } else { v1 };
+    result
+}
+
 fn find_max_product(matrix: &Vec<Vec<u32>>, origin: &Position, shift: &Position) -> u32 {
     let mut positions = init_positions(origin, shift);
     let mut max_product = 0;
@@ -78,12 +43,22 @@ fn find_max_product(matrix: &Vec<Vec<u32>>, origin: &Position, shift: &Position)
 
     while is_valid_index(&positions[2], &matrix) {
         product = calculate_product(&matrix, &positions);
-        max_product = if max_product < product {
-            product
-        } else {
-            max_product
-        };
+        max_product = choose_bigger(max_product, product);
         update_positions(&mut positions, &shift)
+    }
+    max_product
+}
+
+fn find_max_product_with_origin_swap(
+    matrix: &Vec<Vec<u32>>,
+    swap_origin: &Position,
+    shift: &Position,
+) -> u32 {
+    let mut origin = Position { x: 0, y: 0 };
+    let mut max_product = 0;
+    while is_valid_index(&origin, &matrix) {
+        max_product = choose_bigger(max_product, find_max_product(&matrix, &origin, &shift));
+        origin.shift(&swap_origin);
     }
     max_product
 }
@@ -136,8 +111,7 @@ mod tests {
 
     #[test]
     fn all_horizontal() {
-        let mut origin = Position { x: 0, y: 0 };
-        let swap_shift = Position { x: 0, y: 1 };
+        let swap_origin = Position { x: 0, y: 1 };
         let shift = Position { x: 1, y: 0 };
 
         let matrix = vec![
@@ -148,19 +122,9 @@ mod tests {
             vec![1, 2, 3, 1, 1],
         ];
 
-        let mut product = 0;
-        let mut max_product = 0;
-
-        while super::is_valid_index(&origin, &matrix) {
-            product = super::find_max_product(&matrix, &origin, &shift);
-            max_product = if max_product < product {
-                product
-            } else {
-                max_product
-            };
-
-            origin.shift(&swap_shift);
-        }
-        assert_eq!(max_product, 60);
+        assert_eq!(
+            super::find_max_product_with_origin_swap(&matrix, &swap_origin, &shift),
+            60
+        )
     }
 }
